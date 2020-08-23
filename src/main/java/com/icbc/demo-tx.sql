@@ -20,7 +20,7 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `tx`;
 CREATE TABLE `tx` (
-  `tx_id` int(11) NOT NULL,
+  `tx_id` int(11) NOT NULL AUTO_INCREMENT,
   `flow_in_card` varchar(19)  DEFAULT NULL,
   `flow_out_card` varchar(19)  DEFAULT NULL,
   `tx_amount` double(16,2) NOT NULL,

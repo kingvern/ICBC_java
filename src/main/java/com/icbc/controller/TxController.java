@@ -7,12 +7,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.icbc.common.lang.Result;
 import com.icbc.common.lang.dto.TxDto;
 import com.icbc.entity.Card;
+import com.icbc.entity.Tx;
 import com.icbc.service.CardService;
+import com.icbc.service.TxService;
 import com.icbc.util.ShiroUtil;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -27,6 +31,9 @@ public class TxController {
 
     @Autowired
     CardService cardService;
+
+    @Autowired
+    TxService txService;
 
     @RequiresAuthentication
     @PostMapping("/recharge")
@@ -43,6 +50,12 @@ public class TxController {
         if(!card_I.getPaymentPassword().equals(txDto.getPaymentPassword())){
             return Result.fail("密码不正确");
         }
+        Tx tx = new Tx();
+        tx.setFlowOutCard(card_I.getCardId());
+        tx.setFlowInCard(card_II.getCardId());
+        tx.setTxAmount(amount);
+        tx.setRegisterDate(LocalDateTime.now());
+        txService.save(tx);
         card_I.setBalance(card_I.getBalance() - amount);
         card_II.setBalance(card_II.getBalance() + amount);
         cardService.saveOrUpdate(card_I);
@@ -68,6 +81,12 @@ public class TxController {
         if(!card_II.getPaymentPassword().equals(txDto.getPaymentPassword())){
             return Result.fail("密码不正确");
         }
+        Tx tx = new Tx();
+        tx.setFlowOutCard(card_II.getCardId());
+        tx.setFlowInCard(card_I.getCardId());
+        tx.setTxAmount(amount);
+        tx.setRegisterDate(LocalDateTime.now());
+        txService.save(tx);
         card_I.setBalance(card_I.getBalance() + amount);
         card_II.setBalance(card_II.getBalance() - amount);
         cardService.saveOrUpdate(card_I);
